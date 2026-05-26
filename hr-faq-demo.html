@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zavod HR FAQ</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+Arabic:wght@400;600&display=swap');
+
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#0e1a14;--surface:#152010;--border:#2a4030;
+    --gold:#7ec87a;--dim:#4a7050;--text:#d4ead6;--muted:#6a9070;
+  }
+  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans Arabic',sans-serif;min-height:100vh}
+
+  header{
+    padding:18px 20px;border-bottom:1px solid var(--border);
+    display:flex;align-items:center;gap:12px;
+    background:rgba(21,32,16,0.9);position:sticky;top:0;z-index:10;
+  }
+  .logo{font-family:'IBM Plex Mono',monospace;font-size:15px;color:var(--gold);letter-spacing:2px}
+  .badge{margin-left:auto;font-size:11px;color:var(--dim);font-family:'IBM Plex Mono',monospace}
+
+  .tabs{display:flex;border-bottom:1px solid var(--border)}
+  .tab{flex:1;padding:14px;text-align:center;cursor:pointer;font-size:13px;color:var(--muted);
+       border-bottom:2px solid transparent;transition:.2s}
+  .tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+
+  .page{display:none;padding:20px}
+  .page.active{display:block}
+
+  /* FAQ */
+  .faq-item{border:1px solid var(--border);border-radius:10px;margin-bottom:8px;overflow:hidden}
+  .faq-q{padding:14px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .faq-q span{font-size:14px}
+  .faq-arrow{color:var(--dim);font-size:12px;transition:.2s}
+  .faq-a{font-size:13px;color:var(--muted);line-height:1.6;
+          max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s}
+  .faq-item.open .faq-a{max-height:200px;padding:0 16px 14px}
+  .faq-item.open .faq-arrow{transform:rotate(180deg)}
+  .tag{font-size:10px;padding:2px 8px;border-radius:10px;
+       background:rgba(126,200,122,0.1);color:var(--gold);white-space:nowrap}
+
+  /* CHAT */
+  .chat-box{height:340px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+  .bubble{max-width:85%;padding:10px 14px;border-radius:14px;font-size:14px;line-height:1.5}
+  .bubble.ai{background:var(--surface);border:1px solid var(--border);align-self:flex-start;border-bottom-left-radius:4px}
+  .bubble.user{background:var(--gold);color:#0e1a14;align-self:flex-end;border-bottom-right-radius:4px;font-weight:600}
+  .input-row{display:flex;gap:8px}
+  input{flex:1;padding:12px 16px;border-radius:24px;border:1px solid var(--border);
+        background:var(--surface);color:var(--text);font-size:14px;font-family:inherit;outline:none}
+  input::placeholder{color:var(--dim)}
+  button.send{width:46px;height:46px;border-radius:50%;border:none;cursor:pointer;
+              background:var(--gold);color:#0e1a14;font-size:18px;font-weight:bold}
+  .typing{color:var(--dim);font-size:13px;padding:8px 14px}
+
+  /* ADMIN */
+  .admin-form{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px}
+  label{font-size:12px;color:var(--muted);display:block;margin-bottom:4px}
+  .field{margin-bottom:10px}
+  select,textarea{width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--border);
+                   background:#0e1a14;color:var(--text);font-size:13px;font-family:inherit;outline:none}
+  textarea{resize:vertical;min-height:70px}
+  .btn{padding:10px 18px;border-radius:8px;border:none;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600}
+  .btn-green{background:var(--gold);color:#0e1a14}
+  .btn-red{background:rgba(200,80,80,0.2);color:#ff9090}
+  .admin-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:8px}
+  .admin-card-q{font-size:14px;color:var(--gold);margin-bottom:4px}
+  .admin-card-a{font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.5}
+  .row{display:flex;gap:8px}
+  .lock{text-align:center;padding:40px 20px}
+  .lock-icon{font-size:40px;margin-bottom:12px}
+  .lock h3{color:var(--gold);margin-bottom:16px;font-family:'IBM Plex Mono',monospace}
+  .pin-input{width:100%;padding:12px;border-radius:8px;border:1px solid var(--border);
+             background:var(--surface);color:var(--text);font-size:16px;text-align:center;
+             letter-spacing:4px;font-family:'IBM Plex Mono',monospace;outline:none;margin-bottom:10px}
+  .err{color:#ff9090;font-size:12px;margin-top:6px}
+  .hint{font-size:11px;color:var(--dim);margin-top:8px}
+</style>
+</head>
+<body>
+
+<header>
+  <span style="font-size:22px">🏭</span>
+  <span class="logo">HR MƏLUMAT</span>
+  <span class="badge">v1.0</span>
+</header>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('faq')">📋 FAQ</div>
+  <div class="tab" onclick="switchTab('chat')">🤖 AI Sual</div>
+  <div class="tab" onclick="switchTab('admin')">⚙️ Admin</div>
+</div>
+
+<!-- FAQ -->
+<div id="faq" class="page active"></div>
+
+<!-- CHAT -->
+<div id="chat" class="page">
+  <div class="chat-box" id="chatBox">
+    <div class="bubble ai">Salam! 👋 Sualınızı yazın, cavablayacağam.</div>
+  </div>
+  <div class="input-row">
+    <input id="chatInput" placeholder="Sualınızı yazın..." onkeydown="if(event.key==='Enter')sendMsg()">
+    <button class="send" onclick="sendMsg()">➤</button>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="admin" class="page">
+  <div id="adminLock" class="lock">
+    <div class="lock-icon">🔐</div>
+    <h3>Admin Girişi</h3>
+    <input class="pin-input" type="password" id="pinInput" placeholder="••••" maxlength="10" onkeydown="if(event.key==='Enter')adminLogin()">
+    <br><button class="btn btn-green" onclick="adminLogin()">Daxil ol</button>
+    <div class="err" id="pinErr"></div>
+    <div class="hint">Demo şifrə: hr2024</div>
+  </div>
+  <div id="adminPanel" style="display:none">
+    <div class="admin-form">
+      <div style="font-size:13px;color:var(--gold);font-weight:600;margin-bottom:12px">➕ Yeni FAQ</div>
+      <div class="field"><label>Kateqoriya</label>
+        <select id="newCat"><option>Əmək haqqı</option><option>Məzuniyyət</option><option>Sənədlər</option><option>İş qaydaları</option><option>Sağlamlıq</option></select>
+      </div>
+      <div class="field"><label>Sual</label><input id="newQ" placeholder="Sualı daxil edin" style="border-radius:8px;width:100%"></div>
+      <div class="field"><label>Cavab</label><textarea id="newA" placeholder="Cavabı daxil edin"></textarea></div>
+      <button class="btn btn-green" onclick="addFaq()">Əlavə et</button>
+    </div>
+    <div style="font-size:13px;color:var(--gold);font-weight:600;margin-bottom:10px">📝 FAQ-lar</div>
+    <div id="adminList"></div>
+  </div>
+</div>
+
+<script>
+const PASS = "hr2024";
+let faqs = [
+  {id:1,cat:"Əmək haqqı",q:"Maaş nə vaxt verilir?",a:"Hər ayın 5-i və 20-də. Avans 20-də, əsas maaş 5-də."},
+  {id:2,cat:"Məzuniyyət",q:"İllik məzuniyyət neçə gündür?",a:"21 təqvim günü. 5 ildən artıq stajda +2 gün əlavə olunur."},
+  {id:3,cat:"Sənədlər",q:"Arayış almaq üçün nə etməliyəm?",a:"HR şöbəsinə müraciət edin. Arayış 2 iş günündə hazırlanır."},
+  {id:4,cat:"İş qaydaları",q:"İş vaxtı neçədən neçəyədir?",a:"Sahə: 08:00–17:00. Ofis: 09:00–18:00. Nahar fasiləsi 1 saat."},
+  {id:5,cat:"Sağlamlıq",q:"Xəstəlik vərəqəsi necə rəsmiləşdirilir?",a:"İlk gündən HR-i xəbərdar edin. Sağaldıqdan sonra 3 gün içində vərəqəni təqdim edin."},
+];
+
+const CAT_ICON = {"Əmək haqqı":"💰","Məzuniyyət":"🏖️","Sənədlər":"📄","İş qaydaları":"⚙️","Sağlamlıq":"🏥"};
+
+function renderFaq(){
+  const el = document.getElementById('faq');
+  el.innerHTML = faqs.map(f=>`
+    <div class="faq-item" onclick="toggle(${f.id})">
+      <div class="faq-q">
+        <span>${f.q}</span>
+        <span class="tag">${CAT_ICON[f.cat]||''} ${f.cat}</span>
+        <span class="faq-arrow">▼</span>
+      </div>
+      <div class="faq-a">${f.a}</div>
+    </div>`).join('');
+}
+
+function toggle(id){
+  document.querySelectorAll('.faq-item').forEach((el,i)=>{
+    if(faqs[i].id===id) el.classList.toggle('open');
+    else el.classList.remove('open');
+  });
+}
+
+function renderAdmin(){
+  document.getElementById('adminList').innerHTML = faqs.map(f=>`
+    <div class="admin-card">
+      <div class="tag" style="margin-bottom:6px">${CAT_ICON[f.cat]||''} ${f.cat}</div>
+      <div class="admin-card-q">${f.q}</div>
+      <div class="admin-card-a">${f.a}</div>
+      <div class="row">
+        <button class="btn" style="background:rgba(126,200,122,0.1);color:var(--gold)" onclick="deleteFaq(${f.id})">🗑️ Sil</button>
+      </div>
+    </div>`).join('');
+}
+
+function addFaq(){
+  const q=document.getElementById('newQ').value.trim();
+  const a=document.getElementById('newA').value.trim();
+  const cat=document.getElementById('newCat').value;
+  if(!q||!a) return;
+  faqs.push({id:Date.now(),cat,q,a});
+  document.getElementById('newQ').value='';
+  document.getElementById('newA').value='';
+  renderFaq(); renderAdmin();
+}
+
+function deleteFaq(id){ faqs=faqs.filter(f=>f.id!==id); renderFaq(); renderAdmin(); }
+
+function adminLogin(){
+  if(document.getElementById('pinInput').value===PASS){
+    document.getElementById('adminLock').style.display='none';
+    document.getElementById('adminPanel').style.display='block';
+    renderAdmin();
+  } else {
+    document.getElementById('pinErr').textContent='Şifrə yanlışdır.';
+  }
+}
+
+function switchTab(t){
+  document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',['faq','chat','admin'][i]===t));
+  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
+  document.getElementById(t).classList.add('active');
+}
+
+// Simple AI chat using FAQ context
+async function sendMsg(){
+  const input = document.getElementById('chatInput');
+  const msg = input.value.trim();
+  if(!msg) return;
+  input.value='';
+  const box = document.getElementById('chatBox');
+  box.innerHTML += `<div class="bubble user">${msg}</div>`;
+  box.innerHTML += `<div class="typing" id="typing">Yazır...</div>`;
+  box.scrollTop = box.scrollHeight;
+
+  const context = faqs.map(f=>`S: ${f.q}\nC: ${f.a}`).join('\n\n');
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:500,
+        system:`Zavod HR köməkçisisən. Bu FAQ-lara əsasən qısa Azərbaycan dilində cavab ver:\n\n${context}\n\nCavab tapılmasa HR şöbəsinə yönləndir.`,
+        messages:[{role:'user',content:msg}]
+      })
+    });
+    const data = await res.json();
+    document.getElementById('typing')?.remove();
+    box.innerHTML += `<div class="bubble ai">${data.content[0].text}</div>`;
+  } catch {
+    document.getElementById('typing')?.remove();
+    box.innerHTML += `<div class="bubble ai">Xəta baş verdi. Yenidən cəhd edin.</div>`;
+  }
+  box.scrollTop = box.scrollHeight;
+}
+
+renderFaq();
+</script>
+</body>
+</html>
